@@ -22,7 +22,7 @@ export class AuthService {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
     }
-    
+
     const match = await bcrypt.compare(password, user.password);
 
     console.log(match)
@@ -31,6 +31,26 @@ export class AuthService {
     }
 
     return { success: true };
+  }
+
+  async validateUser(email: string, password: string): Promise<User> {
+    //const user = await this.userRepository.findOne(email)
+    const user = await this.userRepository.findOne({
+      where:
+        { email }
+    })
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+    }
+    
+    const match = await bcrypt.compare(password, user.password);
+
+    console.log(match)
+    if (!match) {
+      throw new HttpException('passwords don\'t match', HttpStatus.UNAUTHORIZED)
+    }
+
+    return user;
   }
 
   async register(newUser: NewUser) {
