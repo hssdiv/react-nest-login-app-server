@@ -7,7 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, DogsModule, TypeOrmModule.forRoot({
+  imports: [ConfigModule.forRoot(),
+  AuthModule,
+  DogsModule,
+  TypeOrmModule.forRoot({
     type: 'postgres',
     host: 'localhost',
     port: 5432,
@@ -16,8 +19,8 @@ import { ConfigModule } from '@nestjs/config';
     database: 'react_app',
     autoLoadEntities: true,
     //synchronize: true,
-  }) ],
+  })],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,12 +1,13 @@
-import { Body, Controller, Delete, Get, Patch, Post, Query } from '@nestjs/common';
-import { UseInterceptors } from '@nestjs/common/decorators/core/use-interceptors.decorator';
-import { UploadedFile } from '@nestjs/common/decorators/http/route-params.decorator';
-import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
+import { Body, Controller, Delete, Get, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { NewDog } from './dto/newdog.dto';
 import { UpdatedDog } from './dto/updateddog.dto';
 import { DogService } from './dog.service';
+import JwtAuthenticationGuard from '../auth/guard/jwt-authentication.guard';
+import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
+import { Request, request } from 'express';
 
 @Controller('dogs')
+@UseGuards(JwtAuthenticationGuard)
 export class DogsController {
     constructor(private readonly dogService: DogService) {}
 
@@ -16,9 +17,15 @@ export class DogsController {
         return dogs
     }
 
+    //{ dest: './public/data/uploads/' }
     @Post('save')
-    @UseInterceptors(FileInterceptor('picture'))
-    saveDog(@UploadedFile() file, @Body() dog: NewDog) {
+    @UseInterceptors(FileInterceptor('picture', {
+        dest: './public'
+    }))
+    saveDog(@UploadedFile() file, @Body() dog: NewDog, @Req() request: Request) {
+        console.log('request.user is:')
+        console.log(request.user)
+        console.log('dog is:')
         console.log(dog)
         if (file) {
             //TODO upload locally and add path to dog.imageUrl

@@ -8,6 +8,7 @@ export class NewDog {
     subBreed?: string;
 
     @IsString()
+    @IsOptional()
     imageUrl?: string;
 
     @IsBoolean()
