@@ -29,6 +29,7 @@ export class AuthController {
         console.log(user);
         const cookie = this.authService.getCookieWithJwtToken(user.id);
         response.setHeader('Set-Cookie', cookie);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...userWithoutPassword } = user;
         return response.send(userWithoutPassword);
     }
@@ -36,8 +37,8 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   authenticate(@Req() request: RequestWithUser) {
-      //TODO ??? its '/auth'
       const user = request.user;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userWithoutPassword } = user;
       return userWithoutPassword;
   }
