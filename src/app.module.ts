@@ -5,11 +5,13 @@ import { DogsModule } from './dogs/dogs.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [ConfigModule.forRoot(),
-  AuthModule,
-  DogsModule,
+    AuthModule,
+    DogsModule,
   TypeOrmModule.forRoot({
     type: 'postgres',
     host: 'localhost',
@@ -19,6 +21,9 @@ import { ConfigModule } from '@nestjs/config';
     database: 'react_app',
     autoLoadEntities: true,
     //synchronize: true,
+  }),
+  ServeStaticModule.forRoot({
+    rootPath: join(__dirname, '..', 'public'),
   })],
   controllers: [AppController],
   providers: [AppService],

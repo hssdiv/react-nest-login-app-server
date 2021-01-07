@@ -1,6 +1,6 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
-export class NewDog {
+export class NewDogForm {
     @IsString()
     breed: string;
 
@@ -12,7 +12,7 @@ export class NewDog {
     @IsOptional()
     imageUrl?: string;
 
-    @IsBoolean()
+    @IsString()
     @IsOptional()
-    custom?: boolean;
+    custom?: string;
 }
