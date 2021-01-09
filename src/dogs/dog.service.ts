@@ -52,9 +52,9 @@ export class DogService {
     }
 
     async deleteSelectedDogs(selectedDogs: SelectedDogs) {
-        const dog_ids = selectedDogs.dog_ids;
+        const dogs_ids = selectedDogs.dogs_ids;
         const nonExistingIds = [];
-        await Promise.all(dog_ids.map(async (id) => {
+        await Promise.all(dogs_ids.map(async (id) => {
             const dog = await this.dogRepository.findOne(id);
             console.log(dog);
             if (!dog) {
@@ -68,7 +68,7 @@ export class DogService {
         if (nonExistingIds.length > 0) {
             console.log(`can't find dog(s) with id: ${nonExistingIds}`);
         }
-        return await this.dogRepository.delete(dog_ids);
+        return await this.dogRepository.delete(dogs_ids);
     }
 
     async deleteAllDogs() {

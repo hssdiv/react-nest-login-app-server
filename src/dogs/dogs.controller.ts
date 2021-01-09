@@ -9,9 +9,12 @@ import * as fs from 'fs';
 import RequestWithUser from 'src/auth/requestWithUser.interface';
 import { ApiBody, ApiConsumes, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { SelectedDogs } from './dto/selecteddogs.dto';
+import { Role, Roles, RolesGuard } from './guards';
 
 //TODO delete custom dogs pictures from /public/
 //TODO move all fs\custom image upload to service?
+//UPDATE users SET roles = array_append(roles, 'admin') WHERE user_id=14;
+//array_remove(ARRAY[1,2,3,2], 2)
 
 @ApiTags('dogs')
 @ApiCookieAuth()
@@ -24,6 +27,14 @@ export class DogsController {
     getDogs() {
         const dogs = this.dogService.getDogs();
         return dogs;
+    }
+
+    @Get('test')
+    @UseGuards(JwtAuthenticationGuard, RolesGuard)
+    @Roles(Role.Admin)
+    test(@Req() request: RequestWithUser) {
+        console.log(request.user);
+        return 'vau';
     }
 
     @Post('save')
@@ -74,22 +85,30 @@ export class DogsController {
         return dogToAdd;
     }
 
+    @UseGuards(JwtAuthenticationGuard, RolesGuard)
+    @Roles(Role.Admin)
     @Patch('update')
     updateDog(@Body() dog: UpdatedDog) {
         return this.dogService.updateDog(dog);
     }
 
+    @UseGuards(JwtAuthenticationGuard, RolesGuard)
+    @Roles(Role.Admin)
     @Delete('delete')
     deleteDog(@Query('id') id: number) {
         console.log(id);
         return this.dogService.deleteDog(id);
     }
 
+    @UseGuards(JwtAuthenticationGuard, RolesGuard)
+    @Roles(Role.Admin)
     @Delete('delete/selected')
     deleteSelectedDogs(@Body() selectedDogs: SelectedDogs) {
         return this.dogService.deleteSelectedDogs(selectedDogs);
     }
 
+    @UseGuards(JwtAuthenticationGuard, RolesGuard)
+    @Roles(Role.Admin)
     @Delete('delete/all')
     deleteDogs() {
         return this.dogService.deleteAllDogs();
