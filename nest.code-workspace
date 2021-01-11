@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../react-firebase-login-app"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../react-express-login-app-server"
+		}
+	],
+	"settings": {}
+}

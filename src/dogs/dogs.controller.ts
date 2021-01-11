@@ -29,13 +29,13 @@ export class DogsController {
         return dogs;
     }
 
-    @Get('test')
-    @UseGuards(JwtAuthenticationGuard, RolesGuard)
-    @Roles(Role.Admin)
-    test(@Req() request: RequestWithUser) {
-        console.log(request.user);
-        return 'vau';
-    }
+    // @Get('test')
+    // @UseGuards(JwtAuthenticationGuard, RolesGuard)
+    // @Roles(Role.Admin)
+    // test(@Req() request: RequestWithUser) {
+    //     console.log(request.user);
+    //     return 'test';
+    // }
 
     @Post('save')
     @UseInterceptors(FileInterceptor('picture', {
