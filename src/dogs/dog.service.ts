@@ -44,7 +44,11 @@ export class DogService {
             const uploadPath = path.join(__dirname, '../../public/');
             const picturePathForDeletion = path.join(uploadPath, dog.imageUrl);
             console.log(`gonna delete image at: ${picturePathForDeletion}`);
-            fs.unlinkSync(picturePathForDeletion);
+            try {
+                fs.unlinkSync(picturePathForDeletion);
+            } catch (error) {
+                console.log(error.message);
+            }
             console.log('deleted dog image from server storage');
         }
 
