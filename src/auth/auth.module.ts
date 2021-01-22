@@ -28,30 +28,16 @@ const publicKey = fs.readFileSync(publicPath, 'utf8');
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: async (configService: ConfigService) => ({
-                /*privateKey: configService.get('JWT_PRIVATE_KEY'),
-                publicKey: configService.get('JWT_PUBLIC_KEY'),
-                //secretOrPrivateKey: privateKey,
-                signOptions: {
-                    expiresIn: '3h',
-                    issuer: '<Your Auth Service here>',
-                    algorithm: 'RS256',
-                },*/
-
-
-
                 //secret: configService.get('JWT_SECRET'),
-                //TODO
                 privateKey: privateKey,
-                //privateKey: configService.get('JWT_PRIVATE_KEY'),
                 publicKey: publicKey,
-                //publicKey: configService.get('JWT_PUBLIC_KEY'),
                 signOptions: {
                     expiresIn: `${configService.get('JWT_EXPIRATION_TIME')}s`,
                     algorithm: 'RS256',
                 },
                 /*
                 verifyOptions: {
-				algorithms: ['HS256', 'RS256'],
+				    algorithms: ['HS256', 'RS256'],
 			    },
                 */
             }),

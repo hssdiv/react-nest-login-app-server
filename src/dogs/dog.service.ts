@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class DogService {
@@ -98,5 +99,36 @@ export class DogService {
             console.log(error.message);
         }
         console.log('deleted dog image from server storage');
+    }
+
+    //@Cron(CronExpression.EVERY_10_SECONDS)
+    @Cron(CronExpression.EVERY_DAY_AT_1AM)
+    async clearAllTempFiles() {
+        const now = Date.now();
+        console.log(`now is ${now}`);
+
+        // const fileMetadataPath = join(folderPath, body.name + '.metadata');
+        // const metadataString = fs.readFileSync(fileMetadataPath, 'utf8');
+        // const metadataSize = metadataString.split('\n')[1].split('created : ').pop();
+
+        //TODO
+        // check for .metadata files existance
+        // if exist check it for time of creation field
+        // if it's more than 1hr ago, delete metadata and .tmp file
+        // (.metadata file should have created:Date.now() field when save/custom/initial called)
+    }
+
+    async clearTempFiles(name: string) {
+        console.log('clearTempCanceledUploadFile called');
+
+        // const fileMetadataPath = join(folderPath, body.name + '.metadata');
+        // const metadataString = fs.readFileSync(fileMetadataPath, 'utf8');
+        // const metadataSize = metadataString.split('\n')[1].split('created : ').pop();
+
+        //TODO
+        // check for .metadata files existance
+        // if exist check it for time of creation field
+        // if it's more than 1hr ago, delete metadata and .tmp file
+        // (.metadata file should have created:Date.now() field when save/custom/initial called)
     }
 }

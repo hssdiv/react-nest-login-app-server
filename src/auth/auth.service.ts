@@ -24,7 +24,6 @@ export class AuthService implements OnModuleInit {
     ) { }
 
     async onModuleInit() {
-        console.log('auth module init');
         this.tokenblacklist = await this.tokenBlacklistRepository.find();
     }
 
@@ -64,7 +63,6 @@ export class AuthService implements OnModuleInit {
 
     public getCookieWithJwtToken(userId: number, roles: string[], email: string) {
         console.log('inside authService.getCookieWithJwtToken');
-        //TODO roles
         const payload: TokenPayload = {
             userId,
             email,

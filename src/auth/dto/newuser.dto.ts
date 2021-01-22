@@ -1,7 +1,7 @@
 import { IsString } from 'class-validator';
 
 export class NewUser {
-    //TODO @IsNotEmpty()  @IsEmail()
+    //@IsNotEmpty()  @IsEmail()
     @IsString()
     email: string;
 

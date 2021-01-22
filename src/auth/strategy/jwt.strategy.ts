@@ -25,7 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             }]),
             // secretOrKey: configService.get('JWT_SECRET'),
             jsonWebTokenOptions: { complete: true },
-            //TODO
             secretOrKey: publicKey,
             //secretOrKey: configService.get('JWT_PUBLIC_KEY'),
             algorithms: ['RS256'],
@@ -38,7 +37,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         if (inBlacklist) {
             return null;
         }
-        //console.log(payload.signature);
         return payloadComplete;
     }
 }

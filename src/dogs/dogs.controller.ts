@@ -25,19 +25,9 @@ export class DogsController {
     @Get('get')
     @Roles(Role.User)
     getDogs() {
-        //console.log(request.user.signature);
-        // todo ?  this.dogService.check() request.user.signature
         const dogs = this.dogService.getDogs();
         return dogs;
     }
-
-    // @Get('test')
-    // @UseGuards(JwtAuthenticationGuard, RolesGuard)
-    // @Roles(Role.Admin)
-    // test(@Req() request: RequestWithUser) {
-    //     console.log(request.user);
-    //     return 'test';
-    // }
 
     @Post('save')
     @UseInterceptors(FileInterceptor('picture', {
@@ -50,7 +40,6 @@ export class DogsController {
                 cb(null, `./public/${req.user.email}`);
             },
             filename: (req, file, cb) => {
-                console.log('vau');
                 const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
                 cb(null, `${randomName}${extname(file.originalname)}`);
             },
@@ -87,76 +76,92 @@ export class DogsController {
         return dogToAdd;
     }
 
-    // @Get('save2')
-    // @Roles(Role.User)
-    // saveDog2(@Body() metadata: any) {
-    //     //console.log(request.user.signature);
-    //     // todo ?  this.dogService.check() request.user.signature
-    //     const name = metadata.name;
-    //     console.log(`savedog2: ${name}, ${metadata.size}`);
-    //     return metadata.size;
-    //     // const dogs = this.dogService.getDogs();
-    //     // return dogs;
-    // }
-
-    @Post('save3')
-    async saveDog3(@Body() body: any, @Req() request: any) {
-        //console.log(request.user.signature);
-        // todo ?  this.dogService.check() request.user.signature
-        //console.log(request.user);
-        console.log(body.name);
-        //const body = request.body;
-        //const folderPath = join(__dirname, '../../public/test');
+    @Post('save/custom/initial')
+    async saveCustomInitial(@Body() body: any, @Req() request: any) {
+        console.log('creating .tmp file for custom dog');
         const folderPath = join(__dirname, `../../public/${request.user.payload.email}`);
-        const filePath = join(folderPath, body.name);
-        //console.log(folderPath);
-
+        const fileMetadataPath = join(folderPath, body.name + '.metadata');
         if (!fs.existsSync(folderPath)) {
             fs.mkdirSync(folderPath);
         }
 
-        if (!body.final) {
-            // console.log('body.chunk:');
-            // console.log(body);
-            
-            //const fstream = fs.createWriteStream(filePath);
-            //fstream.write(body.chunk);
-            //fstream.end();
+        fs.appendFileSync(fileMetadataPath, 'size : ' + body.size + '\n');
+        fs.appendFileSync(fileMetadataPath, 'created : ' + Date.now());
 
-            fs.appendFileSync(filePath, body.chunk);
+        return true;
+    }
 
-            console.log('got chunk');
-            return true;
-            // const dogs = this.dogService.getDogs();
-            // return dogs;
-        } else {
-            const base64 = fs.readFileSync(filePath,'utf8');
-            console.log(base64.substring(0,50));
-            const base64Image = base64.split(';base64,').pop();
-            console.log(base64Image.substring(0,50));
-            fs.writeFile(join(folderPath,'image.jpg'), base64Image, {encoding: 'base64'}, function(err) {
-                console.log('File created');
-            });
+    @Post('save/custom')
+    async saveCustom(@Body() body: any, @Req() request: any) {
+        const folderPath = join(__dirname, `../../public/${request.user.payload.email}`);
+        const filePath = join(folderPath, body.name + '.tmp');
+        const fileMetadataPath = join(folderPath, body.name + '.metadata');
+
+        console.log('got chunk!');
+        fs.appendFileSync(filePath, body.chunk);
+
+        const stats = fs.statSync(filePath);
+        const fileSizeInBytes = stats.size;
+        const metadataString = fs.readFileSync(fileMetadataPath, 'utf8');
+        const metadataSize = metadataString.split('\n')[0].split('size : ').pop();
+        const fullSize = parseInt(metadataSize);
+
+        const percent = Math.trunc((fileSizeInBytes / fullSize) * 100);
+        console.log(`progress is ${percent}%`);
+
+        return percent;
+    }
+
+    @Post('save/custom/final')
+    async saveCustomFinal(@Body() body: any, @Req() request: any) {
+        const folderPath = join(__dirname, `../../public/${request.user.payload.email}`);
+        const filePath = join(folderPath, body.name + '.tmp');
+        const fileMetadataPath = join(folderPath, body.name + '.metadata');
+
+        const base64 = fs.readFileSync(filePath, 'utf8');
+        const base64Image = base64.split(';base64,').pop();
+
+        fs.writeFile(join(folderPath, body.name), base64Image, { encoding: 'base64' }, function (err) {
+            console.log('custom dog file created, cleaning up .tmp files...');
+        });
+
+        fs.unlinkSync(filePath);
+        fs.unlinkSync(fileMetadataPath);
 
 
+        const dogToAdd: NewDog = {
+            breed: body.breed,
+            subBreed: body.subBreed,
+            custom: true,
+            imageUrl: `/${request.user.payload.email}/${body.name}`,
+        };
 
+        this.dogService.createDog(dogToAdd);
+        return dogToAdd;
+    }
 
-
-        }
-
+    @Post('save/custom/cleanup')
+    async saveCustomCleanUp(@Body() body: any) {
+        await this.dogService.clearTempFiles(body.name);
+        // const folderPath = join(__dirname, `../../public/${request.user.payload.email}`);
+        // const filePath = join(folderPath, body.name + '.tmp');
+        // const fileMetadataPath = join(folderPath, body.name + '.metadata');
+        // fs.unlinkSync(filePath);
+        // fs.unlinkSync(fileMetadataPath);
+        return true;
     }
 
     @UseGuards(JwtAuthenticationGuard, RolesGuard)
     @Roles(Role.Admin)
     @Patch('update')
-    updateDog(@Body() dog: UpdatedDog) {
+    updateOne(@Body() dog: UpdatedDog) {
         return this.dogService.updateDog(dog);
     }
 
     @UseGuards(JwtAuthenticationGuard, RolesGuard)
     @Roles(Role.Admin)
     @Delete('delete')
-    deleteDog(@Query('id') id: number) {
+    deleteOne(@Query('id') id: number) {
         console.log(id);
         return this.dogService.deleteDog(id);
     }
@@ -164,14 +169,16 @@ export class DogsController {
     @UseGuards(JwtAuthenticationGuard, RolesGuard)
     @Roles(Role.Admin)
     @Delete('delete/selected')
-    deleteSelectedDogs(@Body() selectedDogs: SelectedDogs) {
+    deleteSelected(@Body() selectedDogs: SelectedDogs) {
         return this.dogService.deleteSelectedDogs(selectedDogs);
     }
 
     @UseGuards(JwtAuthenticationGuard, RolesGuard)
     @Roles(Role.Admin)
     @Delete('delete/all')
-    deleteDogs() {
+    deleteAll() {
         return this.dogService.deleteAllDogs();
     }
+
+
 }
