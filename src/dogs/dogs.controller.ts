@@ -136,7 +136,7 @@ export class DogsController {
             imageUrl: `/${request.user.payload.email}/${body.name}`,
         };
 
-        this.dogService.createDog(dogToAdd);
+        await this.dogService.createDog(dogToAdd);
         return dogToAdd;
     }
 

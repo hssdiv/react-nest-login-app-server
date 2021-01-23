@@ -19,11 +19,11 @@ export class DogService {
         return await this.dogRepository.find();
     }
 
-    createDog(newDog: NewDog) {
+    async createDog(newDog: NewDog) {
         console.log('newDoginRep');
         console.log(newDog);
         const dog = this.dogRepository.create(newDog);
-        return this.dogRepository.save(dog);
+        return await this.dogRepository.save(dog);
     }
 
     async updateDog(updatedDog: UpdatedDog) {
