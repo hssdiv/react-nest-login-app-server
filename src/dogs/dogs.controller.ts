@@ -152,14 +152,14 @@ export class DogsController {
     }
 
     @UseGuards(JwtAuthenticationGuard, RolesGuard)
-    @Roles(Role.Admin)
+    //@Roles(Role.Admin)
     @Patch('update')
     updateOne(@Body() dog: UpdatedDog) {
         return this.dogService.updateDog(dog);
     }
 
     @UseGuards(JwtAuthenticationGuard, RolesGuard)
-    @Roles(Role.Admin)
+    //@Roles(Role.Admin)
     @Delete('delete')
     deleteOne(@Query('id') id: number) {
         console.log(id);
@@ -167,14 +167,14 @@ export class DogsController {
     }
 
     @UseGuards(JwtAuthenticationGuard, RolesGuard)
-    @Roles(Role.Admin)
+    //@Roles(Role.Admin)
     @Delete('delete/selected')
     deleteSelected(@Body() selectedDogs: SelectedDogs) {
         return this.dogService.deleteSelectedDogs(selectedDogs);
     }
 
     @UseGuards(JwtAuthenticationGuard, RolesGuard)
-    @Roles(Role.Admin)
+    //@Roles(Role.Admin)
     @Delete('delete/all')
     deleteAll() {
         return this.dogService.deleteAllDogs();

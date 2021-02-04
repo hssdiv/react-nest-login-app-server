@@ -56,8 +56,9 @@ export class AuthService implements OnModuleInit {
         }
         const hashedPassword = await bcrypt.hash(newUser.password, 10);
         newUser.password = hashedPassword;
+        //const newUserDb = { ...newUser, roles: ['user']};
         const user = this.userRepository.create(newUser);
-        await this.userRepository.save(user);
+        await this.userRepository.save(newUser);
         return { email: user.email, success: true };
     }
 

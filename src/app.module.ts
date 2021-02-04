@@ -16,12 +16,22 @@ import { join } from 'path';
         DogsModule,
         TypeOrmModule.forRoot({
             type: 'postgres',
-            host: 'localhost',
-            port: 5432,
-            username: 'postgres',
-            password: '1',
-            database: 'react_app',
-            autoLoadEntities: true,
+            //url: 'postgresql://postgres:1@postgres:5432/react_app',
+            url: process.env.DATABASE_URL, //compose
+            //host: 'localhost',
+            //port: 5432,
+            //username: 'postgres',
+            //password: '1',
+            // entities: [ 
+            //     'src/auth/entity/*.ts',
+            //     'src/auth/entity/*.js',
+            //     'src/dogs/entities/*.ts',
+            //     'src/dogs/entities/*.js',
+            //     './**/*.js'
+            // ],
+            entities: ['dist/**/*.entity.js'],
+            //database: 'react_app',
+            //autoLoadEntities: true,
             //synchronize: true,
         }),
         ServeStaticModule.forRoot({

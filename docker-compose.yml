@@ -1,0 +1,21 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  dogapi:
+    #image: dogapi/nest
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://postgres:1@postgres:5432/react_app
+    ports:
+      - "4000:4000"
+  postgres:
+    image: postgres:13.1
+    ports:
+    - "5433:5432"
+    environment: 
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 1
+          POSTGRES_DB: react_app
+    volumes:
+      - ./db/:/docker-entrypoint-initdb.d
